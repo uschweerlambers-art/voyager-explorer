@@ -1,0 +1,13 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+# local secrets and env files (none are needed for this project)
+.env
+.env.*
+# local tooling
+node_modules/
+*.log
+*.zip
