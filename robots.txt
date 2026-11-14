@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://uschweerlambers-art.github.io/voyager-explorer/sitemap.xml
