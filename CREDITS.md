@@ -9,7 +9,7 @@ Voyager 1 Explorer is an independent, non-commercial study. It is **not affiliat
 | `app/assets/voyager.gltf.json`, `app/assets/model_tex*` | Voyager 3D model (converted from glTF binary to glTF JSON, textures re-encoded) | [NASA 3D Resources](https://science.nasa.gov/3d-resources/) | NASA/JPL-Caltech · [NASA Images and Media Usage Guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/) |
 | `app/assets/record-cover-disc.jpg`, `app/assets/record-panel.jpg` | Golden Record cover (“Instructions for Aliens”), cropped | [nasa.gov](https://www.nasa.gov/image-detail/the-sounds-of-earth-record-cover) | NASA/JPL-Caltech |
 | `app/assets/record-disc-back.jpg` | Golden Record disc, “The Sounds of Earth”, cropped | [science.nasa.gov](https://science.nasa.gov/image-detail/voyager-gold-record-front) | NASA/JPL-Caltech |
-| `app/assets/pre-sunrise.jpg` | Orbital sunrise seen from the International Space Station, cropped to 16:9 | NASA image library | NASA |
+| `app/assets/pre-sunrise.jpg` | “Sunrise Begins” (iss071e487194) – orbital sunrise seen from the International Space Station, Aug 15, 2024; cropped to 16:9 | [nasa.gov](https://www.nasa.gov/image-article/sunrise-begins/) | NASA/Matthew Dominick |
 | `app/assets/bg-jupiter.jpg` | Jupiter rendered as a lit globe from an equirectangular texture, plus a generated starfield | Texture: [Solar System Scope](https://www.solarsystemscope.com/textures/) | © Solar System Scope, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) – changes: projected onto a sphere, relit, cropped and darkened |
 | `assets/shot-*.jpg`, `assets/og-image.jpg` | Screenshots of this presentation | – | Contain the material listed above |
 
