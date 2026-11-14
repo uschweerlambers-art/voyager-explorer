@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voyager 1 Explorer · Interactive real-time 3D</title>
+<meta name="description" content="Explore NASA's Voyager 1 spacecraft in real-time 3D: instruments, the Golden Record and the journey to one light-day from Earth – a browser-based study in interactive 3D presentation.">
+<link rel="canonical" href="https://uschweerlambers-art.github.io/voyager-explorer/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Voyager 1 Explorer">
+<meta property="og:title" content="Voyager 1 Explorer · Interactive real-time 3D">
+<meta property="og:description" content="Explore NASA's most distant spacecraft, the Golden Record and the journey to one light-day – right in your browser.">
+<meta property="og:url" content="https://uschweerlambers-art.github.io/voyager-explorer/">
+<meta property="og:image" content="https://uschweerlambers-art.github.io/voyager-explorer/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Voyager 1 spacecraft rendered in 3D against a starfield, with the title Voyager 1 Explorer">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Voyager 1 Explorer · Interactive real-time 3D">
+<meta name="twitter:description" content="Explore NASA's most distant spacecraft, the Golden Record and the journey to one light-day – right in your browser.">
+<meta name="twitter:image" content="https://uschweerlambers-art.github.io/voyager-explorer/assets/og-image.jpg">
+
+<!-- Fonts are self-hosted; this page makes no requests to third-party servers. -->
+<link rel="stylesheet" href="app/lib/fonts.css">
+<style>
+:root{
+  --bg:#000;
+  --surface:#070b13;
+  --surface-2:#0c1220;
+  --ink:#f3f5f8;
+  --ink-2:rgba(236,241,247,.74);
+  --ink-3:rgba(236,241,247,.5);
+  --line:rgba(255,255,255,.12);
+  --line-2:rgba(255,255,255,.22);
+  --accent:#4fd2ff;
+  --accent-ink:#03111c;
+  --gold:#e9b85c;
+  --font-sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --max:1240px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,iframe:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--max);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.skip{position:absolute;left:-999px;top:8px;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:6px;z-index:50}
+.skip:focus{left:12px}
+.kicker{display:block;font-family:var(--font-mono);font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-2)}
+.kicker::before{content:"";display:block;width:44px;height:2px;background:var(--accent);box-shadow:0 0 12px var(--accent);margin-bottom:18px}
+h1,h2,h3{text-wrap:balance;font-weight:300;letter-spacing:-.01em;margin:0}
+h2{font-size:clamp(30px,4vw,46px);line-height:1.1;margin:14px 0 18px}
+h3{font-weight:500;font-size:19px;letter-spacing:0;margin:0 0 6px}
+p{margin:0 0 1em}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--ink-2);max-width:62ch}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(0,0,0,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#000;z-index:21}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}
+.brand svg{width:34px;height:34px;flex:none}
+.brand b{font-weight:500;font-size:14px;letter-spacing:.42em}
+.nav{display:flex;align-items:center;gap:26px}
+.nav a{color:var(--ink-2);text-decoration:none;font-size:15px}
+.nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:99px;font-size:15px;font-weight:500;text-decoration:none;border:1px solid transparent;transition:background .2s,border-color .2s,color .2s}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{background:#86e1ff}
+.btn-ghost{border-color:var(--line-2);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn svg{width:16px;height:16px}
+.nav .btn{padding:9px 18px;font-size:14px}
+@media (max-width:760px){.nav a:not(.btn){display:none}}
+
+/* hero */
+.hero{padding:56px 0 28px}
+.hero-head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:end;margin-bottom:28px}
+.hero h1{font-size:clamp(40px,6.4vw,82px);line-height:1.02;margin-top:16px}
+.hero .lead{margin:0}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+@media (max-width:860px){.hero-head{grid-template-columns:minmax(0,1fr);gap:18px}}
+.stage{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(79,210,255,.06)}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.stage-note{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;margin-top:12px;font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--ink-3)}
+.stage-note a{color:var(--ink-2)}
+
+/* live strip */
+.live{margin:34px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.live>div{padding:20px 22px;min-width:0}
+.live>div+div{border-left:1px solid var(--line)}
+.live span{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
+.live b{display:block;margin-top:6px;font-family:var(--font-mono);font-weight:400;font-size:clamp(18px,2.2vw,26px);font-variant-numeric:tabular-nums;color:#fff;overflow-wrap:anywhere}
+.live small{display:block;margin-top:4px;font-size:13px;color:var(--ink-3)}
+@media (max-width:760px){.live{grid-template-columns:minmax(0,1fr)}.live>div+div{border-left:0;border-top:1px solid var(--line)}}
+
+/* sections */
+section.block{padding:88px 0;border-top:1px solid var(--line)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
+@media (max-width:860px){.split{grid-template-columns:minmax(0,1fr);gap:28px}}
+.points{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.points li{padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.points li p{margin:0;color:var(--ink-2);font-size:16px}
+.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:36px}
+@media (max-width:760px){.features{grid-template-columns:minmax(0,1fr)}}
+.feature{margin:0}
+.feature img{border-radius:10px;border:1px solid var(--line);aspect-ratio:16/9;object-fit:cover;width:100%}
+.feature figcaption{padding:16px 2px 0}
+.feature figcaption p{color:var(--ink-2);font-size:16px;margin:0}
+.feature .tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:6px}
+.feature.gold .tag{color:var(--gold)}
+.tech{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:32px}
+.tech div{background:var(--surface);padding:20px}
+.tech dt{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.tech dd{margin:6px 0 0;font-size:15px;color:var(--ink)}
+@media (max-width:860px){.tech{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* CTA */
+.cta{padding:96px 0;border-top:1px solid var(--line);background:radial-gradient(60% 120% at 80% 0%,rgba(79,210,255,.12),transparent 60%),var(--bg)}
+.cta .box{display:grid;grid-template-columns:minmax(0,1.3fr) auto;gap:32px;align-items:center}
+@media (max-width:860px){.cta .box{grid-template-columns:minmax(0,1fr)}}
+.cta-actions{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+
+/* sources */
+.sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 48px;margin-top:28px}
+@media (max-width:760px){.sources{grid-template-columns:minmax(0,1fr)}}
+.sources h3{font-family:var(--font-mono);font-weight:500;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.sources ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.sources li{font-size:15px;color:var(--ink-2);min-width:0;overflow-wrap:anywhere}
+.sources li a{color:var(--ink)}
+.sources li em{font-style:normal;color:var(--ink-3)}
+.note{margin-top:28px;padding:16px 18px;border:1px solid var(--line);border-radius:10px;font-size:15px;color:var(--ink-2);background:var(--surface)}
+
+/* faq */
+.faq{display:grid;gap:12px;margin-top:28px;max-width:860px}
+.faq details{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:0 20px}
+.faq summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:500;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--font-mono);color:var(--accent)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{color:var(--ink-2);font-size:16px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0 calc(40px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--ink-3)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 32px}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 22px}
+footer a{color:var(--ink-2)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Voyager 1 Explorer – back to top">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="rgba(255,255,255,.35)"/><ellipse cx="24" cy="24" rx="20" ry="7.5" transform="rotate(-24 24 24)" stroke="#4fd2ff" stroke-width="1.4"/><circle cx="24" cy="24" r="5.2" fill="#fff"/><circle cx="41.2" cy="16.6" r="2" fill="#4fd2ff"/></svg>
+      <b>VOYAGER 1 EXPLORER</b>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#sources">Sources</a>
+      <a class="btn btn-ghost" href="https://www.uweschweerlambers.de/#kontakt" rel="noopener">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-head">
+        <div>
+          <span class="kicker">Interactive real-time 3D</span>
+          <h1>Voyager 1, explorable in your browser</h1>
+        </div>
+        <div>
+          <p class="lead">Rotate NASA's most distant spacecraft, open its instruments, flip the Golden Record and follow the journey to one light-day from Earth. A self-initiated study of interactive 3D presentation – the same approach works for your product.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="https://www.uweschweerlambers.de/#kontakt" rel="noopener">Request a 3D presentation</a>
+            <a class="btn btn-ghost" href="app/index.html">Open fullscreen
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <iframe src="app/index.html" title="Voyager 1 Explorer – interactive 3D presentation" allow="fullscreen; autoplay" allowfullscreen></iframe>
+      </div>
+      <div class="stage-note">
+        <span>Press “Start mission” to begin · Sound starts after your click and can be turned off</span>
+        <span>Best experienced on a desktop or laptop · <a href="app/index.html">fullscreen version</a></span>
+      </div>
+
+      <div class="live" aria-live="off">
+        <div><span id="lvLabel">One light-day in</span><b id="lvCount">–</b><small>Nov 18, 2026 · 10:16 UTC (NASA)</small></div>
+        <div><span>Distance from Earth</span><b id="lvMi">–</b><small id="lvKm">–</small></div>
+        <div><span>Signal travel time</span><b id="lvLt">–</b><small>Approximation · see “How exact is the distance?”</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="about" aria-labelledby="about-h">
+    <div class="wrap split">
+      <div>
+        <span class="kicker">About the project</span>
+        <h2 id="about-h">A complex object, explained by letting people explore it</h2>
+        <p class="lead">Voyager 1 has been flying since 1977. This presentation turns NASA's 3D model of the spacecraft into an experience you can steer yourself: every part you click tells its own short story.</p>
+        <p class="lead">It is a study for a service: interactive 3D presentations of machines, devices and components, built from existing 3D or CAD data and shown directly in the browser – at trade fairs, in sales conversations or on a website.</p>
+      </div>
+      <ul class="points">
+        <li><h3>Runs in the browser</h3><p>No app, no plug-in, no download. A modern browser with WebGL is all it takes.</p></li>
+        <li><h3>Built from existing 3D data</h3><p>The spacecraft is NASA's published 3D model, prepared for real-time rendering in about 1.6 MB.</p></li>
+        <li><h3>Easy to embed</h3><p>A 16:9 frame that fits into any website, for example a WordPress page.</p></li>
+        <li><h3>Privacy-friendly</h3><p>No tracking, no cookies, no third-party fonts or CDNs.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="features" aria-labelledby="features-h">
+    <div class="wrap">
+      <span class="kicker">What's inside</span>
+      <h2 id="features-h">Four chapters, one spacecraft</h2>
+      <div class="features">
+        <figure class="feature">
+          <img src="assets/shot-spacecraft.jpg" width="1280" height="720" loading="lazy" alt="Voyager 1 in 3D against a starfield, with hotspot markers on its antenna, cameras and power source">
+          <figcaption><span class="tag">Spacecraft</span><h3>Orbit, zoom and explore</h3><p>A cinematic real-time scene with bloom, ACES tone mapping and a starfield that drifts past as if you were flying alongside.</p></figcaption>
+        </figure>
+        <figure class="feature">
+          <img src="assets/shot-hotspots.jpg" width="1280" height="720" loading="lazy" alt="An info panel about the high-gain antenna, connected by a line to the hotspot on the dish">
+          <figcaption><span class="tag">Instruments</span><h3>Six hotspots with info panels</h3><p>High-gain antenna, cameras, power source, magnetometer boom, plasma wave antennas – each with a close-up rendered live.</p></figcaption>
+        </figure>
+        <figure class="feature gold">
+          <img src="assets/shot-golden-record.jpg" width="1280" height="720" loading="lazy" alt="The engraved cover of the Golden Record as a rotating 3D disc in front of a darkened Jupiter">
+          <figcaption><span class="tag">Golden Record</span><h3>A chapter of its own</h3><p>Turn the disc, flip between cover and record and read about its music, images, greetings and the instructions engraved on the cover.</p></figcaption>
+        </figure>
+        <figure class="feature">
+          <img src="assets/shot-journey.jpg" width="1280" height="720" loading="lazy" alt="A timeline from 1977 to 2026 with milestones, a countdown to one light-day and a distance counter">
+          <figcaption><span class="tag">Mission</span><h3>The journey to one light-day</h3><p>Eight milestones from launch to interstellar space, a countdown to November 18, 2026 and a live distance counter in miles or kilometers.</p></figcaption>
+        </figure>
+      </div>
+      <dl class="tech">
+        <div><dt>Rendering</dt><dd>three.js r169 · WebGL 2</dd></div>
+        <div><dt>Look</dt><dd>Bloom, ACES, film grain</dd></div>
+        <div><dt>Sound</dt><dd>Synthesized with Web Audio</dd></div>
+        <div><dt>Size</dt><dd>About 4 MB, no build step</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="cta-h">
+    <div class="wrap box">
+      <div>
+        <span class="kicker">For your product</span>
+        <h2 id="cta-h">Want an interactive 3D presentation of your product?</h2>
+        <p class="lead">From CAD data to an explorable presentation with hotspots, chapters and your own story – for trade fairs, sales and your website. Created by Uwe Schweer-Lambers, 3D motion designer.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="https://www.uweschweerlambers.de/#kontakt" rel="noopener">Get in touch</a>
+        <a class="btn btn-ghost" href="https://github.com/uschweerlambers-art/voyager-explorer" rel="noopener">View the code on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="sources" aria-labelledby="sources-h">
+    <div class="wrap">
+      <span class="kicker">Sources &amp; credits</span>
+      <h2 id="sources-h">Where everything comes from</h2>
+      <div class="sources">
+        <div>
+          <h3>3D model &amp; images</h3>
+          <ul>
+            <li>Voyager 3D model – <a href="https://science.nasa.gov/3d-resources/" rel="noopener">NASA 3D Resources</a> <em>(NASA/JPL-Caltech; converted to glTF and optimized)</em></li>
+            <li>Golden Record cover – <a href="https://www.nasa.gov/image-detail/the-sounds-of-earth-record-cover" rel="noopener">“Instructions for Aliens”</a> <em>(NASA/JPL-Caltech)</em></li>
+            <li>Golden Record disc – <a href="https://science.nasa.gov/image-detail/voyager-gold-record-front" rel="noopener">“Voyager Golden Record – Front”</a> <em>(NASA/JPL-Caltech)</em></li>
+            <li>Orbital sunrise (loading screen) – <a href="https://www.nasa.gov/image-article/sunrise-begins/" rel="noopener">“Sunrise Begins”</a>, photographed from the International Space Station, Aug 15, 2024 <em>(NASA/Matthew Dominick; cropped to 16:9)</em></li>
+            <li>Jupiter texture – <a href="https://www.solarsystemscope.com/textures/" rel="noopener">Solar System Scope</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> <em>(rendered as a lit globe, cropped and darkened)</em></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Mission facts</h3>
+          <ul>
+            <li><a href="https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/" rel="noopener">What Is a Light-Day?</a> <em>– NASA Science (countdown time and light-day distance)</em></li>
+            <li><a href="https://science.nasa.gov/mission/voyager/where-are-voyager-1-and-voyager-2-now/" rel="noopener">Where Are Voyager 1 and Voyager 2 Now?</a> <em>– NASA Science</em></li>
+            <li><a href="https://science.nasa.gov/blogs/voyager/2026/04/17/nasa-shuts-off-instrument-on-voyager-1-to-keep-spacecraft-operating/" rel="noopener">NASA Shuts Off Instrument on Voyager 1 to Keep Spacecraft Operating</a> <em>– NASA Voyager blog, Apr 17, 2026</em></li>
+            <li><a href="https://science.nasa.gov/mission/voyager/golden-record-cover/" rel="noopener">The Golden Record Cover</a> <em>– NASA Science</em></li>
+            <li><a href="https://science.nasa.gov/mission/voyager/" rel="noopener">Voyager mission overview</a> <em>– NASA Science</em></li>
+          </ul>
+          <h3 style="margin-top:22px">Software &amp; fonts</h3>
+          <ul>
+            <li><a href="https://threejs.org/" rel="noopener">three.js</a> r169 <em>(MIT)</em></li>
+            <li><a href="https://rsms.me/inter/" rel="noopener">Inter</a> and <a href="https://github.com/IBM/plex" rel="noopener">IBM Plex Mono</a> <em>(SIL Open Font License 1.1)</em></li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">This is an independent, non-commercial study. It is not affiliated with or endorsed by NASA or JPL. NASA material is used in accordance with the <a href="https://www.nasa.gov/nasa-brand-center/images-and-media/" rel="noopener">NASA Images and Media Usage Guidelines</a>; no NASA insignia is used.</p>
+    </div>
+  </section>
+
+  <section class="block" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <span class="kicker">FAQ</span>
+      <h2 id="faq-h">Good to know</h2>
+      <div class="faq">
+        <details>
+          <summary>How exact is the distance counter?</summary>
+          <p>It is an approximation. It is anchored to NASA's figure that Voyager 1 is exactly one light-day (16,094,799,096 miles / 25,902,068,356 km) from Earth on November 18, 2026 at 5:16:07 a.m. EST. From there it adds the spacecraft's speed of about 16.9 km/s and Earth's position on its orbit around the Sun. Values can differ from NASA's live figures by some tens of thousands of kilometers.</p>
+        </details>
+        <details>
+          <summary>What happens after November 18, 2026?</summary>
+          <p>The countdown turns into a counter showing the time since Voyager 1 reached one light-day. The distance and the signal travel time keep growing.</p>
+        </details>
+        <details>
+          <summary>Does this site collect any data?</summary>
+          <p>There are no cookies, no analytics and no forms. All files, including fonts and the 3D library, are served from this site. If you switch between miles and kilometers, that choice is stored only in your own browser. The site is hosted on GitHub Pages; GitHub processes technical data such as IP addresses to deliver it. See the privacy notice linked below.</p>
+        </details>
+        <details>
+          <summary>Which devices are supported?</summary>
+          <p>Current versions of Chrome, Edge, Firefox and Safari with WebGL 2. It also runs on phones and tablets, but the 16:9 presentation is best viewed on a larger screen or in landscape.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>A study by Uwe Schweer-Lambers · EQUILOUD – Motion Graphics &amp; 3D Animation</div>
+    <nav aria-label="Legal">
+      <a href="https://www.uweschweerlambers.de/impressum/" rel="noopener" hreflang="de">Legal notice (German)</a>
+      <a href="https://www.uweschweerlambers.de/datenschutzerklaerung/" rel="noopener" hreflang="de">Privacy (German)</a>
+      <a href="https://github.com/uschweerlambers-art/voyager-explorer" rel="noopener">GitHub</a>
+      <a href="https://github.com/uschweerlambers-art/voyager-explorer/blob/main/LICENSE" rel="noopener">Code: MIT License</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* Live strip: same model as the distance counter in the presentation (see app/index.html). */
+(function(){
+  var LIGHTDAY_UTC=Date.UTC(2026,10,18,10,16,7), D_LIGHTDAY=25902068356;
+  var C=299792.458, AU=149597870.7, V=16.9, MI=1.609344;
+  var ra=258.3*Math.PI/180, de=12.1*Math.PI/180, ep=23.439*Math.PI/180;
+  var x=Math.cos(de)*Math.cos(ra), y=Math.cos(de)*Math.sin(ra), z=Math.sin(de);
+  var U=[x, y*Math.cos(ep)+z*Math.sin(ep), -y*Math.sin(ep)+z*Math.cos(ep)];
+  function earth(ms){var n=ms/864e5+2440587.5-2451545,r=Math.PI/180,L=(280.46+.9856474*n)*r,g=(357.528+.9856003*n)*r,l=L+(1.915*Math.sin(g)+.02*Math.sin(2*g))*r+Math.PI,R=(1.00014-.01671*Math.cos(g)-.00014*Math.cos(2*g))*AU;return[R*Math.cos(l),R*Math.sin(l),0];}
+  function dist(ms,R0){var R=R0+V*(ms-LIGHTDAY_UTC)/1000,e=earth(ms);return Math.hypot(R*U[0]-e[0],R*U[1]-e[1],R*U[2]-e[2]);}
+  var R0=D_LIGHTDAY; for(var i=0;i<6;i++){R0+=D_LIGHTDAY-dist(LIGHTDAY_UTC,R0);}
+  var f=new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+  var $=function(id){return document.getElementById(id);};
+  function p(n){return String(n).padStart(2,'0');}
+  function tick(){
+    var now=Date.now(), diff=LIGHTDAY_UTC-now, past=diff<0; diff=Math.abs(diff);
+    var d=Math.floor(diff/864e5),h=Math.floor(diff/36e5)%24,m=Math.floor(diff/6e4)%60,s=Math.floor(diff/1e3)%60;
+    $('lvLabel').textContent= past ? 'One light-day reached · since' : 'One light-day in';
+    $('lvCount').textContent= d+'d '+p(h)+'h '+p(m)+'m '+p(s)+'s';
+    var km=dist(now,R0); $('lvMi').textContent=f.format(km/MI)+' mi'; $('lvKm').textContent=f.format(km)+' km';
+    var lt=km/C; $('lvLt').textContent=Math.floor(lt/3600)+' h '+p(Math.floor(lt/60)%60)+' min '+p(Math.floor(lt)%60)+' s';
+  }
+  tick(); setInterval(tick,1000);
+})();
+</script>
+</body>
+</html>
